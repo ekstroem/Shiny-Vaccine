@@ -1,7 +1,8 @@
+# 
+# Shiny app for SIR model with vaccinations
 #
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
+# Created by Claus Ekstrøm 2019
+# @ClausEkstrom
 #
 
 library("shiny")
@@ -23,10 +24,18 @@ sir <- function(time, state, parameters) {
   })
 }
 
-# Define UI for application that draws a histogram
+
+#
+# Define UI 
+#
+
 ui <- dashboardPage(
   dashboardHeader(disable = TRUE),
   dashboardSidebar(
+    sliderInput("popsize",
+      "Population size (millions):",
+      min = 1, max = 300, value = 6
+    ),
     sliderInput("connum",
       "Basic reproductive number (R0, # persons):",
       min = .5, max = 20, value = 5
@@ -76,15 +85,16 @@ ui <- dashboardPage(
   )
 )
 
-# Define server logic required to draw a histogram
+#
+# Define server 
+#
 server <- function(input, output) {
   # Create reactive input
-  popsize <- 5700000
   dataInput <- reactive({
     init       <-
       c(
-        S = 1 - input$pinf / popsize - input$pvac / 100 * input$vaceff / 100,
-        I = input$pinf / popsize,
+        S = 1 - input$pinf / (input$popsize*1000000) - input$pvac / 100 * input$vaceff / 100,
+        I = input$pinf /  (input$popsize*1000000),
         R = 0,
         V = input$pvac / 100 * input$vaceff / 100
       )
